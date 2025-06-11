@@ -215,4 +215,4 @@ For the submission: submit your solution in an R Markdown file and (just for ins
 (Optional but encouraged):\
 If you’d like to practice using GitHub, feel free to push your `.Rmd` and knitted `.html` file to a **public GitHub repository** under your own account. If you do, paste the link to your GitHub repo below:
 
-> GitHub repo link (optional): `__________`
+> GitHub repo link (optional): `______https://github.com/RoseB04/ds-2020-hw2____`
