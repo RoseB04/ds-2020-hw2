@@ -1,0 +1,218 @@
+---
+title: 'DS 2020 - Summer 2025 - Homework #2'
+author: "Rose Birkner"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Lab: Ames Housing Data Exploration
+
+## Overview
+
+In this lab, you will explore the `ames` dataset from the `classdata` package, which contains residential sales data in Ames, Iowa since 2017. All work should be completed in this `.Rmd` file and submitted through Canvas.
+
+The main variable of interest is `Sale_Price`. You will:
+
+-   Investigate this variable and its distribution
+-   Identify and explore one other variable that may relate to `Sale_Price`
+-   Use code, visualizations, and written explanation to communicate your findings
+
+Make sure your `.Rmd` file knits cleanly to `.html`. You will submit both the `.Rmd` and the knitted output.
+
+## Step 1: Data Exploration
+
+1.  Inspect the first few lines of the data set:
+    -   What variables are there?
+    -   Of what type are the variables?
+    -   What does each variable mean?
+    -   What do you expect their data ranges to be?
+
+> answer
+
+```{r}
+library(classdata)
+data(ames)
+
+head(ames)
+str(ames)
+?ames
+```
+
+-   The variables are Parcel ID, Address, Style, Occupancy, Sale Date, Sale Price, Multi Sale, YearBuilt, Acres, TotalLivingArea (sf), Bedrooms, FinishedBsmtArea (sf), LotArea (sf), AC, FirePlace, and Neighborhood.
+-   Parcel ID is a character variable and is an ID number. Address is a character variable and is the property address in Ames, IA. Style is a factor variable detailing the type of housing. Occupancy is a factor variable which also describes the type of housing. Sale Date is a date variable which is the date of sale. Sale Price is a numeric variable and is the sale price of a home in US dollars. Multi Sale is a character variable with logical value which denotes if the sale was part of a package. YearBuilt is a numeric variable and is the year when the house was built. Acres is a numeric variable and is the acres of the lot. TotalLivingArea (sf) is a numeric variable which is the total living area in square feet. Bedrooms is a numeric variable which is the number of bedrooms in the home. FinishedBsmtArea (sf) is a numeric variable and is the total area of the finished basement in square feet. LotArea (sf) is a numeric variable which is the total lot area in square feet. AC is a character variable with logical value which denotes whether or not the property has an AC. FirePlace is a logical value character variable and denotes if the property has a fireplace or not. Finally, neighborhood is a factor variable with levels that indicate the neighborhood area in Ames.
+-   From the description of the data set, Sale Date has a range from January 1, 2017 to August 31, 2022. I would expect the range of Sale Price to be from about 150,000 to 600,000. YearBuilt could range from the early 1900s to 2024. The range of Acres is maybe from under 1 acre to 15 acres. TotalLivingArea (sf) I would expect to be between 1,000 and 5,000 square feet. Bedrooms could range from 1 to 7. FinishedBsmtArea (sf) I would expect to be from 400 to 2000 square feet. I expect LotArea (sf) could be from 2000 to 30000 square feet.
+
+2.  Begin the exploration with the main variable, `Sale_Price`:
+    -   What is the range of this variable?
+    -   Create a histogram to visualize the distribution.
+    -   What is the general pattern? Are there any unusual or extreme values?
+
+> answer
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+summary(ames$`Sale Price`)
+
+ames %>% ggplot(aes(x = `Sale Price`)) +
+  geom_histogram(binwidth = 100000)
+
+```
+
+-   Based on the 5 number summary for Sale Price I see that there are some outliers in the data as the range of the variable is from 0 to 20500000.
+-   Looking at the histogram for Sale Price we can also see that there are definitely some outliers in this data set. It is difficult to see the distribution of this variable because of some very large outliers that stretch the x axis, but from what can be seen of the bulk of the data which is clustered in the far left of the graph, it appears to be right skewed.
+
+3.  Choose a second variable that may relate to `Sale_Price`:
+    -   What is the range of this variable? Plot it and describe the pattern.
+    -   Explore the relationship between this variable and `Sale_Price`. Use a scatterplot, boxplot, or faceted bar chart—whichever is most appropriate.
+    -   Describe the pattern. Does this second variable help explain anything you observed in `Sale_Price`?
+
+> answer
+
+```{r}
+summary(ames$`TotalLivingArea (sf)`)
+
+ames %>% ggplot(aes(x = `TotalLivingArea (sf)`)) +
+  geom_histogram(binwidth = 200)
+
+ames %>% ggplot(aes(x = `TotalLivingArea (sf)`, y = `Sale Price`)) +
+  geom_point()
+```
+
+-   The variable I chose that I thought would relate to Sale Price is TotalLivingArea (sf).
+-   The range of this variable is from 0 to 6007, making it apparent that there are some outliers.
+-   The histogram shows that the variable is somewhat right skewed.
+-   It is very difficult to interpret the scatterplot of TotalLivingArea (sf) and Sale Price due to the outliers in the data set. We can see from the scatterplot that the homes with extremely high sale prices do not have a large square footage. From this we can gather that square footage is not the leading cause for these homes having such a high sale price. So, while a large square footage is generally associated with a high sale price, TotalLivingArea (sf) does not help explain why there are such extreme outliers in Sale Price.
+
+# Homework Assignment
+
+## Chick Weights
+
+The `ChickWeight` data set is part of the base package `datasets`. See `?ChickWeight` for details on the data. For all of the questions use `dplyr` functions whenever possible.
+
+1.  Download the RMarkdown file with these homework instructions to use as a template for your work. Make sure to replace "Your Name" in the YAML with your name. To get full points, show your R code (in a code chunk) and write answers to the questions.
+
+2.  What variables are part of the dataset?
+
+> answer
+
+```{r}
+library(dplyr)
+
+?ChickWeight
+str(ChickWeight)
+```
+
+-   The variables in this data set are:
+    -   weight - body weight of the chick
+    -   Time - vector giving number of days since birth when the measurement was made
+    -   Chick - a factor variable with levels that gives a unique identifier for the chick. Groups chicks on the same diet together and orders them according to their final weight.
+    -   Diet - a factor variable with levels 1, 2, 3, and 4 indicating the diet the chick recieved.
+
+3.  Get a frequency breakdown of the number of chicks, their average weight and the standard deviation of the weights in each of the diets at the start of the study.
+
+-   extra credit: construct a ggplot that shows average weights by diet with an interval (shown as a line) of +- the standard deviation around the averages. (Hint: read this article regarding [ggplot error bars](http://www.sthda.com/english/wiki/ggplot2-error-bars-quick-start-guide-r-software-and-data-visualization))
+
+> answer
+
+```{r}
+library(ggplot2)
+
+ChickWeight_diet <- ChickWeight %>% 
+  filter(Time == 0) %>% 
+  group_by(Diet) %>% 
+  summarize(
+    num_chicks = n(),
+    avg_weight = mean(weight),
+    sd_weight = sd(weight)
+  )
+  
+ChickWeight_diet %>% ggplot(aes(x = Diet, y = avg_weight, fill = Diet)) +
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin=avg_weight-sd_weight, ymax=avg_weight+sd_weight), width = 0.2)
+```
+
+
+-   Each diet as 10-20 chicks. The average starting weight for the diets varies slightly between 40.7 and 41.4. The standard deviation for starting weight ranges from 0.9947 to 1.4944.
+
+4.  Each chick should have twelve weight measurements. Use the `dplyr` package to identify how many chicks have a complete set of weight measurements and how many measurements there are on average in the incomplete cases. Extract a subset of the data for all chicks with complete information and name the data set `complete`. (Hint: you might want to use mutate to introduce a helper variable consisting of the number of observations)
+
+> answer
+
+```{r}
+group_by_chick <- ChickWeight %>% 
+  group_by(Chick) %>% 
+  summarize(
+    observations_per_chick = n()
+  ) %>% 
+  arrange(as.numeric(as.character(Chick)))
+
+chick_12 <- group_by_chick %>% 
+  filter(observations_per_chick == 12)
+
+chick_not_12 <- group_by_chick %>% 
+  filter(observations_per_chick != 12)
+
+num_chicks_complete <- nrow(chick_12)
+num_chicks_complete
+
+avg_num_incomplete_measurements <- mean(chick_not_12$observations_per_chick)
+avg_num_incomplete_measurements
+
+ChickWeight <- ChickWeight %>% 
+  mutate(
+    is_complete = Chick %in% chick_12$Chick
+  )
+
+
+complete <- ChickWeight %>% 
+  filter(is_complete == TRUE)
+```
+
+
+-   There are 45 chicks with complete measurements. The average number of measurements in the incomplete cases is 7.6.
+
+5.  In the complete data set introduce a new variable that measures the current weight difference compared to day 0. Name this variable `weightgain`. (Hint: use mutate and `?mutate` to check the parameter `.by`. This parameter can create a temporary `group_by` so that we can do calculation in each subgroup, i.e. for each combination of chick and diet, `weight - min(weight)`)
+
+> answer
+
+```{r}
+complete <- complete %>%
+  mutate(
+    weightgain = weight - weight[Time == 0],
+    .by = Chick
+  )
+```
+
+6.  Use `ggplot2` to create side-by-side boxplots of `weightgain` by `Diet` for day 21. Describe the relationship in 2-3 sentences. Change the order of the categories in the Diet variable such that the boxplots are ordered by median `weightgain`.
+
+> answer
+
+```{r}
+complete %>% 
+  filter(Time == 21) %>% 
+  ggplot(aes(x = Diet, y = weightgain)) +
+  geom_boxplot()
+
+
+complete %>% 
+  filter(Time == 21) %>% 
+  ggplot(aes(x = reorder(Diet, weightgain, FUN = median), y = weightgain)) +
+  geom_boxplot()
+```
+
+
+-   We can see from the boxplots that diet 1 showed the lowest median weight gain and diet 3 showed the highest median weight gain. Diet 2 has the highest amount of variation in its weight gain and diet 4 has the lowest amount of variation.
+
+Note: Your submission is supposed to be fully reproducible, i.e. the TA and I will 'knit' your submission in RStudio.
+
+For the submission: submit your solution in an R Markdown file and (just for insurance) submit the corresponding html (or Word) file with it.
+
+(Optional but encouraged):\
+If you’d like to practice using GitHub, feel free to push your `.Rmd` and knitted `.html` file to a **public GitHub repository** under your own account. If you do, paste the link to your GitHub repo below:
+
+> GitHub repo link (optional): `__________`
